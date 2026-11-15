@@ -121,7 +121,7 @@
 :root {
   /* caratteri: il graziato delle etichette per i titoli, un bastone chiaro e leggibile per il testo */
   /* dopo ogni carattere c'è una riserva larga uguale: mentre il carattere vero arriva, il testo non cambia righe */
-  --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-display: "Playfair Display", "Titoli di riserva", Georgia, "Times New Roman", serif;
   --font-text: "Figtree", Arial, "Helvetica Neue", Helvetica, sans-serif;
   --fs-micro: 0.75rem;    /* 12 px: solo etichette brevi */
   --fs-small: 0.875rem;   /* 14 px */
@@ -206,6 +206,9 @@
 
 @font-face { font-family: "Playfair Display"; src: url("../font/playfair-display-variabile.woff2") format("woff2"); font-weight: 400 900; font-style: normal; font-display: swap; }
 @font-face { font-family: "Playfair Display"; src: url("../font/playfair-display-variabile-corsivo.woff2") format("woff2"); font-weight: 400 900; font-style: italic; font-display: swap; }
+/* riserva dei titoli: Georgia ristretto alla larghezza di Playfair Display (misurato: 0,881), così quando arriva il
+   carattere vero le righe non cambiano e la pagina non si sposta */
+@font-face { font-family: "Titoli di riserva"; src: local("Georgia Bold"), local("Georgia-Bold"), local("Georgia"); font-weight: 400 900; size-adjust: 88.1%; }
 @font-face { font-family: "Figtree"; src: url("../font/figtree-variabile.woff2") format("woff2"); font-weight: 300 900; font-style: normal; font-display: swap; }
 @font-face { font-family: "Figtree"; src: url("../font/figtree-variabile-corsivo.woff2") format("woff2"); font-weight: 300 900; font-style: italic; font-display: swap; }
 
@@ -283,6 +286,7 @@ main:focus { outline: none; }
 .sezione-bosco .attacco { color: var(--on-shell); }
 .testo { display: grid; gap: var(--s4); }
 .testo :where(p, li) { max-width: var(--misura); }
+.testo h2 { margin-top: var(--s8); font-size: var(--fs-h3); line-height: 1.2; }   /* un titolo sta più vicino al suo testo che a quello di prima */
 .piccolo { max-width: var(--misura); font-size: var(--fs-small); color: var(--text-muted); }
 .titoletto { margin-top: var(--s8); font-family: var(--font-text); font-size: var(--fs-small); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
 .famiglia { font-size: var(--fs-small); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
@@ -324,7 +328,7 @@ main:focus { outline: none; }
 .apertura { padding-block: clamp(var(--s10), 6vw, var(--s20)) clamp(var(--s12), 7vw, var(--s24)); overflow: hidden; }
 .apertura-griglia { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: clamp(var(--s8), 5vw, var(--s20)); align-items: center; }
 .apertura-testo { display: grid; gap: var(--s6); }
-.apertura h1 em { font-style: italic; color: var(--link); }
+.apertura h1 em { font-style: normal; color: var(--link); }
 .rassicura { display: flex; gap: var(--s2); align-items: flex-start; max-width: var(--misura); font-size: var(--fs-small); color: var(--text-2); }
 .rassicura .i { color: var(--success); margin-top: 0.15em; }
 /* il favo: sette celle esagonali, come lo stendardo dell'azienda */
@@ -334,8 +338,8 @@ main:focus { outline: none; }
 .cella:nth-child(1) { grid-column: 2 / span 2; }
 .cella:nth-child(n + 3) { margin-top: -27.6%; }   /* le righe si incastrano: un quarto dell'altezza della cella */
 .cella:nth-child(6) { grid-column: 2 / span 2; }
-.cella-scritta { display: grid; place-content: center; gap: var(--s1); background: var(--accent); color: var(--on-accent); text-align: center; }
-.cella-scritta strong { font-family: var(--font-display); font-size: clamp(1.3rem, 2.4vw, 2rem); line-height: 1; }
+.cella-scritta { display: grid; place-content: center; gap: var(--s1); padding: 0 14%; background: var(--accent); color: var(--on-accent); text-align: center; }
+.cella-scritta strong { font-family: var(--font-display); font-size: clamp(1.05rem, 2.2vw, 1.9rem); line-height: 1; }
 .cella-scritta span { font-size: var(--fs-micro); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
 @media (max-width: 900px) {
   .apertura-griglia { grid-template-columns: minmax(0, 1fr); }
@@ -447,7 +451,7 @@ main:focus { outline: none; }
 .campo input::placeholder, .campo textarea::placeholder { color: var(--text-muted); opacity: 1; }
 .campo .aiuto { font-size: var(--fs-small); color: var(--text-muted); }
 .spunta { display: flex; gap: var(--s3); align-items: flex-start; min-height: 44px; font-size: var(--fs-small); }
-.spunta input { flex: none; width: 22px; height: 22px; margin: 0.15em 0 0; accent-color: var(--primary); }
+.spunta input { flex: none; width: 24px; height: 24px; margin: 0.15em 0 0; accent-color: var(--primary); }
 @media (max-width: 560px) { .campi { grid-template-columns: minmax(0, 1fr); } }
 
 /* ---------- regali ---------- */
@@ -459,7 +463,7 @@ main:focus { outline: none; }
 .scatola { position: relative; display: grid; gap: var(--s2); padding: var(--s3); background: var(--surface); border: 2px solid var(--hairline); border-radius: var(--radius-lg); cursor: pointer; }
 .scatola:has(input:checked) { border-color: var(--primary); }
 .scatola:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 3px; }
-.scatola input { position: absolute; top: var(--s4); right: var(--s4); width: 22px; height: 22px; margin: 0; accent-color: var(--primary); }
+.scatola input { position: absolute; top: var(--s4); right: var(--s4); width: 24px; height: 24px; margin: 0; accent-color: var(--primary); }
 .scatola picture, .scatola img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius-md); }
 .scatola strong { padding-right: var(--s8); }
 @media (max-width: 480px) { .scatole { grid-template-columns: minmax(0, 1fr); } }
