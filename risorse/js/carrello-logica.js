@@ -55,6 +55,12 @@
     return { righe: voci, pezzi: conta(voci), completo: completo, totale: completo ? totale : null };
   }
 
+  /* La spedizione: una tariffa sola, gratuita da una certa spesa in su. Se le regole non ci sono ancora, non si dice. */
+  function spedizione(totale, regole) {
+    if (!regole || !regole.attiva || typeof regole.tariffa !== "number" || totale === null) { return null; }
+    return typeof regole.gratis_da === "number" && totale >= regole.gratis_da ? 0 : regole.tariffa;
+  }
+
   /* Il messaggio per WhatsApp: l'elenco, il totale (o «da confermare») e ciò che la persona ha scritto. */
   function messaggio(righe, catalogo, chi) {
     var c = conti(righe, catalogo), linee = ["Buongiorno, vorrei ordinare:"];
@@ -70,5 +76,5 @@
     return linee.join("\n");
   }
 
-  return { MASSIMO: MASSIMO, pulisci: pulisci, aggiungi: aggiungi, imposta: imposta, togli: togli, conta: conta, euro: euro, conti: conti, messaggio: messaggio };
+  return { MASSIMO: MASSIMO, pulisci: pulisci, aggiungi: aggiungi, imposta: imposta, togli: togli, conta: conta, euro: euro, conti: conti, spedizione: spedizione, messaggio: messaggio };
 });

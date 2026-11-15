@@ -44,10 +44,15 @@
     });
     conti.textContent = "";
     conti.appendChild(riga("Prodotti", c.pezzi === 1 ? "1 pezzo" : c.pezzi + " pezzi"));
-    conti.appendChild(riga("Spedizione", "da confermare"));
-    conti.appendChild(riga("Totale dei prodotti", c.completo ? L.euro(c.totale) : "da confermare", "totale"));
+    var costo = L.spedizione(c.totale, dati.spedizione);
+    conti.appendChild(riga("Spedizione", costo === null ? "da confermare" : costo === 0 ? "gratuita" : L.euro(costo)));
+    if (costo === null) {
+      conti.appendChild(riga("Totale dei prodotti", c.completo ? L.euro(c.totale) : "da confermare", "totale"));
+    } else {
+      conti.appendChild(riga("Totale", L.euro(c.totale + costo), "totale"));
+    }
     aggiornaRichiesta();
-    var online = Boolean(dati.api) && c.completo;
+    var online = Boolean(dati.api) && c.completo && costo !== null;
     if (pagamento) { pagamento.hidden = !online; }
     if (inPreparazione) { inPreparazione.hidden = online; }
   }
@@ -83,7 +88,8 @@
       tasto.disabled = true;
       var corpo = { righe: N.leggi(), cliente: { nome: f.nome.value.trim(), email: f.email.value.trim(), telefono: f.telefono.value.trim() },
                     consegna: { via: f.via.value.trim(), cap: f.cap.value.trim(), citta: f.citta.value.trim(), provincia: f.provincia.value.trim().toUpperCase() },
-                    note: f.note.value.trim(), condizioni: f.condizioni.checked, privacy: f.privacy.checked };
+                    note: f.note.value.trim(), condizioni: f.condizioni.checked, privacy: f.privacy.checked,
+                    totale_visto: L.conti(N.leggi(), dati.righe).totale };
       window.fetch(dati.base + dati.api + "/ordini", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(corpo), credentials: "omit" })
         .then(function (risposta) { return risposta.json().then(function (j) { return { ok: risposta.ok, j: j }; }); })
         .then(function (r) {
