@@ -14,13 +14,13 @@
   --text: #1B1F16;
   --text-2: #383C2F;
   --text-muted: #5D6150;
-  --link: #1C5630;
-  /* il verde del marchio: l'azione */
-  --primary: #267040;
+  --link: #135C01;
+  /* il verde del marchio (#135C01 nelle lettere del monogramma): l'azione, un poco più chiaro perché l'anello del fuoco si veda */
+  --primary: #2A7A12;
   --on-primary: #FFFFFF;
-  --primary-hover: #1C5630;
-  --primary-tint: #DCEAD7;
-  --on-primary-tint: #143D22;
+  --primary-hover: #135C01;
+  --primary-tint: #DDEBD6;
+  --on-primary-tint: #0F4A01;
   /* il miele: evidenze e prezzi */
   --accent: #F2C14B;
   --on-accent: #2A1E04;
@@ -44,11 +44,11 @@
   --info-fg: #1F5578;
   --info-bg: #DCEAF3;
   /* fasce scure (piede, finestra delle immagini): scure in entrambi i temi, verde bosco */
-  --shell: #14251A;
+  --shell: #12260F;
   --on-shell: #EEF0E3;
   --shell-muted: #B3BBA5;
   --shell-line: #2E4435;
-  --night: #0D1911;
+  --night: #0B1A08;
   --on-night: #F3F1E5;
   /* colori da disegno, presi dalle etichette: mai per il testo */
   --ink-honey: #E3A72F;
@@ -65,6 +65,8 @@
   --schema: light;
   --mostra-sole: block;
   --mostra-luna: none;
+  --logo-giorno: block;
+  --logo-notte: none;
 }
 :root[data-theme="dark"] {
   --bg: #11150E;
@@ -73,10 +75,10 @@
   --text: #F1EFE2;
   --text-2: #D7D6C5;
   --text-muted: #A4A795;
-  --link: #9FD8AB;
-  --primary: #44935A;
+  --link: #A4DB93;
+  --primary: #47963A;
   --on-primary: #031207;
-  --primary-hover: #55A76C;
+  --primary-hover: #58A84B;
   --primary-tint: #173522;
   --on-primary-tint: #C3EACB;
   --accent: #5C4409;
@@ -117,6 +119,8 @@
   --schema: dark;
   --mostra-sole: none;
   --mostra-luna: block;
+  --logo-giorno: none;
+  --logo-notte: block;
 }
 :root {
   /* caratteri: il graziato delle etichette per i titoli, un bastone chiaro e leggibile per il testo */
@@ -141,6 +145,13 @@
   --radius-md: 8px;
   --radius-lg: 14px;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  /* la testata parte alta e si stringe scorrendo: le due altezze e il loro rapporto */
+  --testata-alta: 112px;
+  --testata-bassa: 72px;
+  --testata-rapporto: 0.643;
+}
+@media (max-width: 900px) {
+  :root { --testata-alta: 84px; --testata-bassa: 64px; --testata-rapporto: 0.762; }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -151,10 +162,10 @@
   --text: #F1EFE2;
   --text-2: #D7D6C5;
   --text-muted: #A4A795;
-  --link: #9FD8AB;
-  --primary: #44935A;
+  --link: #A4DB93;
+  --primary: #47963A;
   --on-primary: #031207;
-  --primary-hover: #55A76C;
+  --primary-hover: #58A84B;
   --primary-tint: #173522;
   --on-primary-tint: #C3EACB;
   --accent: #5C4409;
@@ -195,6 +206,8 @@
   --schema: dark;
   --mostra-sole: none;
   --mostra-luna: block;
+  --logo-giorno: none;
+  --logo-notte: block;
 }
 }
 /* Sito dell'azienda agricola e apistica Principato Annalisa · foglio comune a tutte le pagine.
@@ -236,43 +249,80 @@ main:focus { outline: none; }
 .salta:focus { transform: none; }
 .nascosto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-/* ---------- testata ---------- */
-.testata { position: sticky; top: 0; z-index: 40; background: var(--bg); border-bottom: 1px solid var(--hairline); }
-.testata-riga { display: flex; align-items: center; gap: var(--s6); min-height: 76px; }
-.marchio { display: inline-flex; align-items: center; gap: var(--s3); min-height: 44px; color: var(--link); text-decoration: none; }
-.segno { flex: none; }
-.segno-favo { fill: var(--accent); }
-.segno-stelo { fill: none; stroke: var(--primary); stroke-width: 2.4; stroke-linecap: round; }
-.segno-foglia { fill: var(--primary); }
-.marchio-scritta { display: grid; line-height: 1.05; }
-.marchio-nome { font-family: var(--font-display); font-size: 1.375rem; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; }
-.marchio-sotto { font-size: var(--fs-micro); font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); white-space: nowrap; }
+/* ---------- testata: parte alta e si stringe scorrendo ----------
+   Si muovono solo `transform` e `opacity`: il fondo della testata è un velo che si accorcia, il contenuto sale e il
+   marchio rimpicciolisce. Lo spazio che la testata occupa nella pagina resta quello alto; la parte che si libera è
+   trasparente e lascia passare i tocchi. */
+html { scroll-padding-top: calc(var(--testata-bassa) + 16px); }
+.vedetta { position: absolute; top: 0; left: 0; width: 1px; height: 120px; pointer-events: none; }
+.testata { position: sticky; top: 0; z-index: 40; height: var(--testata-alta); pointer-events: none; }
+.testata::before { content: ""; position: absolute; inset: 0; background: var(--bg); box-shadow: 0 1px 0 var(--hairline); transform-origin: top; transition: transform 280ms var(--ease); }
+.testata.stretta::before { transform: scaleY(var(--testata-rapporto)); box-shadow: 0 1px 0 var(--hairline), var(--shadow); }
+.testata-riga { position: relative; display: flex; align-items: center; gap: var(--s5); height: 100%; transition: transform 280ms var(--ease); }
+.testata.stretta .testata-riga { transform: translateY(calc((var(--testata-bassa) - var(--testata-alta)) / 2)); }
+.testata-riga > * { pointer-events: auto; }
+.marchio { display: inline-flex; align-items: center; min-height: 44px; text-decoration: none; }
+.logo { width: auto; height: 76px; transform-origin: left center; transition: transform 280ms var(--ease); }
+.testata.stretta .logo { transform: scale(0.7); }
+.logo-giorno { display: var(--logo-giorno); }
+.logo-notte { display: var(--logo-notte); }
 .menu { margin-left: auto; }
-.menu ul { display: flex; gap: var(--s1); }
+.menu > ul { display: flex; align-items: center; gap: var(--s1); }
 .menu a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--s3); color: var(--text); font-weight: 600; text-decoration: none; border-radius: var(--radius-md); }
-.menu a:hover { text-decoration: underline; text-decoration-thickness: 2px; }
+.menu a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.4em; }
 .menu a[aria-current="page"], .menu a[data-sezione] { color: var(--link); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.4em; }
+.con-sotto { position: relative; display: flex; align-items: center; }
+.con-sotto > a { padding-right: var(--s1); }
+.sotto-apri { display: inline-grid; place-content: center; width: 32px; height: 44px; padding: 0; background: none; color: var(--text); border: 0; border-radius: var(--radius-md); cursor: pointer; }
+.sotto-apri .i { width: 1.1em; height: 1.1em; transition: transform 200ms var(--ease); }
+.sotto-apri[aria-expanded="true"] .i { transform: rotate(180deg); }
+.sotto { position: absolute; top: 100%; left: 0; z-index: 2; display: grid; min-width: 220px; padding: var(--s2); background: var(--surface); border: 1px solid var(--hairline); border-radius: var(--radius-md); box-shadow: var(--shadow-alta); visibility: hidden; opacity: 0; transform: translateY(-6px); transition: opacity 180ms var(--ease), transform 180ms var(--ease), visibility 0s linear 180ms; }
+.con-sotto:hover > .sotto, .con-sotto:focus-within > .sotto, .con-sotto.aperta > .sotto { visibility: visible; opacity: 1; transform: none; transition-delay: 0s; }
+.sotto a { width: 100%; }
+.sotto li:last-child { margin-top: var(--s1); padding-top: var(--s1); border-top: 1px solid var(--hairline); }
 .testata-comandi { display: flex; align-items: center; gap: var(--s2); }
 .carrello-link { position: relative; display: inline-flex; align-items: center; gap: var(--s2); min-height: 44px; padding: 0 var(--s3); color: var(--text); font-weight: 600; text-decoration: none; border: 1px solid var(--border); border-radius: 999px; }
 .carrello-link[aria-current="page"] { border-color: var(--primary); color: var(--link); }
 .carrello-numero { min-width: 1.6em; padding: 0 0.35em; background: var(--accent); color: var(--on-accent); border-radius: 999px; font-size: var(--fs-small); font-weight: 700; text-align: center; }
-.tema { display: inline-flex; align-items: center; justify-content: center; gap: var(--s2); min-width: 44px; min-height: 44px; padding: 0 var(--s3); background: none; color: var(--text); font: inherit; font-size: var(--fs-small); font-weight: 600; border: 1px solid var(--border); border-radius: 999px; cursor: pointer; }
+.tema, .menu-apri { display: inline-flex; align-items: center; justify-content: center; gap: var(--s2); min-width: 44px; min-height: 44px; padding: 0 var(--s3); background: none; color: var(--text); font: inherit; font-size: var(--fs-small); font-weight: 600; border: 1px solid var(--border); border-radius: 999px; cursor: pointer; }
 .tema .sole { display: var(--mostra-sole); }
 .tema .luna { display: var(--mostra-luna); }
 .no-js .tema { display: none; }
-@media (max-width: 1080px) {
+.menu-apri { display: none; padding: 0; }
+.menu-apri .chiudi, .menu-aperto .menu-apri .apri { display: none; }
+.menu-aperto .menu-apri .chiudi { display: block; }
+@media (max-width: 1120px) {
   .tema span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .tema { padding: 0; }
 }
+/* sul telefono il menu è un pannello che si apre dal pulsante: voci grandi, le famiglie del negozio già in vista */
 @media (max-width: 900px) {
-  .testata-riga { flex-wrap: wrap; gap: 0 var(--s4); padding-top: var(--s2); }
-  .testata-comandi { margin-left: auto; }
-  .menu { order: 3; width: 100%; margin: 0 calc(-1 * var(--gutter)); width: calc(100% + 2 * var(--gutter)); border-top: 1px solid var(--hairline); overflow-x: auto; scrollbar-width: none; }
-  .menu ul { padding-inline: calc(var(--gutter) - var(--s3)); width: max-content; }
+  .testata-riga { gap: var(--s2); }
+  .logo { height: 58px; }
+  .testata.stretta .logo { transform: scale(0.8); }
+  .marchio { margin-right: auto; }
+  .menu-apri { display: inline-flex; order: 3; }
+  .testata-comandi { order: 2; }
   .carrello-parola { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-  .marchio-nome { font-size: 1.2rem; }
+  .menu { position: absolute; left: 0; right: 0; top: var(--testata-alta); margin: 0; max-height: calc(100vh - var(--testata-alta)); max-height: calc(100dvh - var(--testata-alta)); overflow-y: auto; padding: var(--s3) var(--gutter) var(--s10); background: var(--bg); border-top: 1px solid var(--hairline); box-shadow: var(--shadow-alta); visibility: hidden; opacity: 0; transform: translateY(-8px); transition: opacity 200ms var(--ease), transform 200ms var(--ease), visibility 0s linear 200ms; }
+  .testata.stretta .menu { top: calc((var(--testata-alta) + var(--testata-bassa)) / 2); }
+  .menu-aperto .menu { visibility: visible; opacity: 1; transform: none; transition-delay: 0s; }
+  .menu > ul { display: grid; gap: 0; }
+  .menu > ul > li { border-bottom: 1px solid var(--hairline); }
+  .menu a { width: 100%; min-height: 56px; padding: 0 var(--s1); font-family: var(--font-display); font-size: 1.375rem; }
+  .con-sotto { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .sotto-apri { display: none; }
+  .sotto { position: static; min-width: 0; padding: 0 0 var(--s3) var(--s4); background: none; border: 0; box-shadow: none; visibility: inherit; opacity: 1; transform: none; transition: none; }
+  .sotto a { min-height: 44px; font-family: var(--font-text); font-size: var(--fs-base); }
+  .sotto li:last-child { margin: 0; padding: 0; border: 0; }
+  html.menu-aperto { overflow: hidden; }
 }
-@media (max-width: 420px) { .marchio-sotto { display: none; } }
+/* senza JavaScript: niente pannello e niente restringimento, il menu resta in vista */
+.no-js .testata { position: static; height: auto; pointer-events: auto; }
+.no-js .testata-riga { flex-wrap: wrap; height: auto; padding-block: var(--s3); }
+.no-js .menu-apri { display: none; }
+.no-js .menu { position: static; max-height: none; padding: 0; border: 0; box-shadow: none; visibility: visible; opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .testata::before, .testata-riga, .logo, .menu, .sotto, .sotto-apri .i { transition: none; } }
 
 /* ---------- pezzi comuni ---------- */
 .sezione { padding-block: clamp(var(--s12), 7vw, var(--s24)); }
@@ -324,13 +374,40 @@ main:focus { outline: none; }
   .btn, .collegamento .i, .segno-domanda { transition: none; }
 }
 
-/* ---------- apertura della pagina iniziale ---------- */
-.apertura { padding-block: clamp(var(--s10), 6vw, var(--s20)) clamp(var(--s12), 7vw, var(--s24)); overflow: hidden; }
-.apertura-griglia { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: clamp(var(--s8), 5vw, var(--s20)); align-items: center; }
-.apertura-testo { display: grid; gap: var(--s6); }
-.apertura h1 em { font-style: normal; color: var(--link); }
+/* ---------- apertura: prima le fotografie, a tutta larghezza; il testo sta su un'etichetta, come sui vasetti ---------- */
+.apertura { position: relative; padding-bottom: clamp(var(--s12), 6vw, var(--s20)); }
+.scena { position: relative; height: clamp(360px, 70vh, 760px); overflow: hidden; background: var(--night); }
+.scena-foto { position: absolute; inset: 0; opacity: 0; }
+.scena-foto:first-child { opacity: 1; }
+.scena-foto picture, .scena-foto img { width: 100%; height: 100%; object-fit: cover; }
+.scena-credito { position: absolute; right: var(--gutter); bottom: var(--s3); z-index: 1; padding: 2px var(--s2); background: var(--night); color: var(--on-night); border-radius: var(--radius-sm); font-size: var(--fs-micro); opacity: 0; }
+/* le fotografie si danno il cambio piano, con un lento avvicinarsi: solo se il movimento è gradito */
+@media (prefers-reduced-motion: no-preference) {
+  .js .scena-foto { animation: scena-cambio 28s infinite; }
+  .js .scena-foto:first-child { animation-name: scena-prima; }
+  .js .scena-foto:nth-child(2), .js .scena-credito { animation-delay: 7s; }
+  .js .scena-foto:nth-child(3) { animation-delay: 14s; }
+  .js .scena-foto:nth-child(4) { animation-delay: 21s; }
+  .js .scena-credito { animation: scena-nota 28s infinite 7s; }
+  .js .scena.ferma .scena-foto, .js .scena.ferma .scena-credito { animation-play-state: paused; }
+}
+@keyframes scena-prima { 0% { opacity: 1; transform: scale(1); } 25% { opacity: 1; } 29% { opacity: 0; transform: scale(1.07); } 96% { opacity: 0; transform: scale(1); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes scena-cambio { 0% { opacity: 0; transform: scale(1); } 4% { opacity: 1; } 25% { opacity: 1; } 29% { opacity: 0; transform: scale(1.07); } 100% { opacity: 0; transform: scale(1.07); } }
+@keyframes scena-nota { 0% { opacity: 0; } 4% { opacity: 0.9; } 25% { opacity: 0.9; } 29% { opacity: 0; } 100% { opacity: 0; } }
+.scena-ferma { position: absolute; right: var(--gutter); top: var(--s4); z-index: 2; display: none; place-content: center; width: 44px; height: 44px; padding: 0; background: var(--night); color: var(--on-night); border: 1px solid var(--on-night); border-radius: 999px; cursor: pointer; }
+.scena-ferma:focus-visible { outline-color: var(--on-night); }
+.scena-ferma .via, .scena.ferma .scena-ferma .pausa { display: none; }
+.scena.ferma .scena-ferma .via { display: block; }
+@media (prefers-reduced-motion: no-preference) { .js .scena-ferma { display: grid; } }
+.etichetta-apertura { position: relative; z-index: 2; display: grid; gap: var(--s5); max-width: 660px; margin-top: calc(-1 * clamp(110px, 20vh, 210px)); padding: clamp(var(--s6), 3.2vw, var(--s12)); background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-alta); }
+.etichetta-apertura h1 { font-size: clamp(2.1rem, 1.3rem + 3vw, 3.5rem); }
+.etichetta-apertura h1 em { font-style: normal; color: var(--link); }
 .rassicura { display: flex; gap: var(--s2); align-items: flex-start; max-width: var(--misura); font-size: var(--fs-small); color: var(--text-2); }
 .rassicura .i { color: var(--success); margin-top: 0.15em; }
+@media (max-width: 700px) {
+  .scena { height: clamp(300px, 56vh, 520px); }
+  .etichetta-apertura { margin-top: -72px; }
+}
 /* il favo: sette celle esagonali, come lo stendardo dell'azienda */
 .favo { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); column-gap: var(--s2); }
 .cella { grid-column: span 2; aspect-ratio: 0.866; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background: var(--surface-tint); }
@@ -341,10 +418,7 @@ main:focus { outline: none; }
 .cella-scritta { display: grid; place-content: center; gap: var(--s1); padding: 0 14%; background: var(--accent); color: var(--on-accent); text-align: center; }
 .cella-scritta strong { font-family: var(--font-display); font-size: clamp(1.05rem, 2.2vw, 1.9rem); line-height: 1; }
 .cella-scritta span { font-size: var(--fs-micro); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
-@media (max-width: 900px) {
-  .apertura-griglia { grid-template-columns: minmax(0, 1fr); }
-  .favo { max-width: 520px; margin-inline: auto; width: 100%; }
-}
+@media (max-width: 900px) { .favo { max-width: 520px; margin-inline: auto; width: 100%; } }
 
 /* ---------- i tre mieli ---------- */
 .tre-mieli { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(var(--s6), 3vw, var(--s10)); }
@@ -510,7 +584,7 @@ main:focus { outline: none; }
 .piede :focus-visible { outline-color: var(--on-shell); }
 .piede-griglia { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr); gap: var(--s10); }
 .piede-chi { display: grid; gap: var(--s3); align-content: start; }
-.piede-nome { font-family: var(--font-display); font-size: 1.75rem; font-weight: 650; }
+.piede-logo { width: auto; height: 92px; }
 .piede-motto { font-family: var(--font-display); font-style: italic; color: var(--shell-muted); }
 .piede-titolo { margin-bottom: var(--s2); font-size: var(--fs-small); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--shell-muted); }
 .piede li a { display: inline-flex; align-items: center; min-height: 44px; }
