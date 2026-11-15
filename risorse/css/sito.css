@@ -379,7 +379,8 @@ main:focus { outline: none; }
 /* ---------- negozio ---------- */
 .filtri { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s8); }
 .filtro { min-height: 44px; padding: 0 var(--s4); background: var(--surface); color: var(--text); font: inherit; font-weight: 600; border: 1px solid var(--border); border-radius: 999px; cursor: pointer; }
-.filtro[aria-pressed="true"] { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
+.filtro { display: inline-flex; align-items: center; text-decoration: none; }
+.filtro[aria-current="page"] { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
 .griglia-prodotti { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(var(--s6), 3vw, var(--s10)) clamp(var(--s5), 2.4vw, var(--s8)); }
 @media (max-width: 1000px) { .griglia-prodotti { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 620px) { .griglia-prodotti { grid-template-columns: minmax(0, 1fr); } }
@@ -395,6 +396,11 @@ main:focus { outline: none; }
 .carta-nome a:hover { text-decoration: underline; text-decoration-thickness: 2px; }
 .carta-frase { color: var(--text-2); }
 .carta-formati { font-size: var(--fs-small); color: var(--text-muted); }
+.btn-carta { justify-self: start; min-height: 44px; padding: var(--s2) var(--s4); }
+.carta-scelta { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.carta-scelta select { min-height: 44px; max-width: 100%; padding: 0 var(--s3); background: var(--surface); color: var(--text); font: inherit; font-size: 1rem; border: 1px solid var(--border); border-radius: var(--radius-md); }
+.carta-esito:empty { display: none; }
+.carta-esito { font-size: var(--fs-small); font-weight: 600; color: var(--success-fg); }
 .stato { display: inline-flex; align-items: center; gap: var(--s2); width: fit-content; padding: var(--s1) var(--s3); font-size: var(--fs-small); font-weight: 700; border-radius: 999px; }
 .stato-ordinabile { background: var(--success-bg); color: var(--success-fg); }
 .stato-su_richiesta { background: var(--warning-bg); color: var(--warning-fg); }
@@ -511,6 +517,81 @@ main:focus { outline: none; }
 .piede-fondo { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s2) var(--s8); margin-top: var(--s12); padding-top: var(--s6); border-top: 1px solid var(--shell-line); font-size: var(--fs-small); color: var(--shell-muted); }
 .piede-fondo a { display: inline-flex; align-items: center; min-height: 44px; }
 @media (max-width: 760px) { .piede-griglia { grid-template-columns: minmax(0, 1fr); gap: var(--s8); } }
+
+/* ---------- striscia in cima: un invito vero, scritto nei dati del sito ---------- */
+.striscia { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0 var(--s3); padding: 0 var(--gutter); background: var(--shell); color: var(--on-shell); font-size: var(--fs-small); font-weight: 600; text-align: center; }
+.striscia a { display: inline-flex; align-items: center; min-height: 44px; color: var(--on-shell); }
+.striscia :focus-visible { outline-color: var(--on-shell); }
+@media (max-width: 620px) { .striscia span, .striscia a + span + a { display: none; } }
+
+/* ---------- pagina di una famiglia: fascia con fotografia e titolo ---------- */
+.fascia-categoria { position: relative; display: grid; align-items: end; min-height: clamp(220px, 28vw, 360px); background: var(--night); color: var(--on-night); overflow: hidden; }
+/* la fotografia occupa la parte destra e sfuma nel verde scuro verso il titolo, che così si legge sempre */
+.fascia-foto { position: absolute; inset: 0 0 0 36%; }
+.fascia-foto::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to right, var(--night) 5%, transparent 64%); }
+.fascia-foto picture, .fascia-foto img { width: 100%; height: 100%; object-fit: cover; }
+.fascia-foto[data-fuoco="basso"] img { object-position: center 74%; }
+.fascia-testo { position: relative; z-index: 1; padding-block: var(--s8) var(--s6); }
+.fascia-testo h1 { max-width: 14ch; }
+@media (max-width: 760px) {
+  .fascia-foto { inset: 0; opacity: 0.6; }
+  .fascia-foto::after { background: linear-gradient(to top, var(--night) 8%, transparent 95%); }
+}
+.fascia-testo .briciole { margin-bottom: var(--s3); }
+.fascia-testo .briciole a, .fascia-testo .briciole li, .fascia-testo .briciole li + li::before { color: var(--on-night); }
+.fascia-categoria :focus-visible { outline-color: var(--on-night); }
+.perche { display: grid; gap: var(--s4); margin-bottom: var(--s8); }
+.perche p { max-width: var(--misura); }
+
+/* ---------- scheda: galleria, punti, promesse, voci apribili ---------- */
+.galleria-scena .scheda-foto img { aspect-ratio: 4 / 5; object-fit: cover; }
+.miniature { display: flex; flex-wrap: wrap; gap: var(--s3); }
+.miniatura { width: 84px; height: 84px; padding: 0; background: none; border: 2px solid var(--hairline); border-radius: var(--radius-md); overflow: hidden; cursor: pointer; }
+.miniatura[aria-pressed="true"] { border-color: var(--primary); }
+.miniatura img { width: 100%; height: 100%; object-fit: cover; }
+.no-js .miniature { display: none; }
+.no-js .galleria-scena [data-vista][hidden] { display: block !important; margin-top: var(--s4); }
+.punti { display: grid; gap: var(--s2); }
+.punti li { display: flex; gap: var(--s2); align-items: flex-start; font-weight: 600; }
+.punti .i { margin-top: 0.15em; color: var(--ink-honey); }
+.promesse { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s3); margin-top: var(--s2); }
+.promesse li { display: grid; gap: var(--s1); justify-items: start; padding: var(--s3); background: var(--surface-tint); border-radius: var(--radius-md); font-size: var(--fs-small); }
+.promesse .i { color: var(--link); }
+.promesse strong { display: block; font-size: var(--fs-base); }
+@media (max-width: 620px) { .promesse { grid-template-columns: minmax(0, 1fr); } .promesse li { grid-template-columns: auto minmax(0, 1fr); column-gap: var(--s3); } }
+.voci { display: grid; margin-top: var(--s4); border-top: 1px solid var(--hairline); }
+.voce { border-bottom: 1px solid var(--hairline); }
+.voce summary { display: flex; justify-content: space-between; align-items: center; gap: var(--s4); min-height: 56px; font-weight: 700; cursor: pointer; list-style: none; }
+.voce summary::-webkit-details-marker { display: none; }
+.voce[open] .segno-domanda { transform: rotate(45deg); }
+.voce .risposta { padding-bottom: var(--s4); color: var(--text-2); }
+.voce .risposta p { max-width: var(--misura); }
+.voce .dati-prodotto { border-top: 0; }
+
+/* ---------- «Il nostro miele è…» ---------- */
+.valori { position: relative; background: var(--call-bg); }
+.onda { position: absolute; left: 0; bottom: calc(100% - 1px); width: 100%; height: 28px; fill: var(--call-bg); }
+.valori h2 { margin-bottom: var(--s8); font-style: normal; }
+.valori-elenco { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s6); }
+.valori-elenco li { display: grid; gap: var(--s2); align-content: start; }
+.valori-elenco .i { width: 40px; height: 40px; color: var(--ink-amber); }
+.valori-elenco strong { display: block; font-family: var(--font-display); font-size: 1.25rem; font-weight: 650; }
+.valori-elenco span { color: var(--text-2); }
+@media (max-width: 900px) { .valori-elenco { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .valori-elenco { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- «Quale miele fa per te?» ---------- */
+.no-js .trova { display: none; }
+.trova-passo { display: grid; gap: var(--s4); }
+.trova-domanda { font-family: var(--font-display); font-size: var(--fs-h3); font-weight: 650; }
+.trova-domanda:focus, .trova-esito h3:focus { outline: none; }
+.trova-esito { display: grid; grid-template-columns: minmax(0, 320px) minmax(0, 1fr); gap: var(--s8); align-items: center; }
+.trova-esito picture, .trova-esito img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius-lg); }
+.trova-testo { display: grid; gap: var(--s4); }
+.trova-ancora { margin-top: var(--s6); padding: 0; background: none; color: var(--link); font: inherit; font-weight: 700; border: 0; cursor: pointer; text-decoration: underline; }
+.trova-ancora .i { transform: rotate(180deg); }
+@media (max-width: 760px) { .trova-esito { grid-template-columns: minmax(0, 1fr); } }
+.dopo-mieli { margin-top: var(--s8); }
 
 /* ---------- solo per la bozza in anteprima: non fa parte del sito vero ---------- */
 .anteprima-fascia { margin: 0; max-width: none; padding: 10px max(var(--gutter), calc((100% - var(--maxw)) / 2)); background: var(--warning-bg); color: var(--warning-fg); font-size: var(--fs-small); line-height: 1.4; }
