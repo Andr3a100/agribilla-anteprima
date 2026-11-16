@@ -12,3 +12,6 @@ L'integrità del pacchetto è quella dichiarata dal registro e verificata da npm
   integrità  sha512-VRVodD7OiG7apQwE8/2fMjaqpY/a0qRJqL5HtYj8CKIVps+9amaFcdfKmDIf7iqYQx6iPLlArVXAfKeIZmVcNQ==
   figtree-variabile.woff2                   sha256 4ba7d3d096695818fe0686be4f1e82c6b05134e18a22260336130335027462dd
   figtree-variabile-corsivo.woff2           sha256 7242fa62d13d46172816b266f03c027999faa3755a52c2124bc2c440f6f4b983
+
+16/11/2026: tolto figtree-variabile-corsivo.woff2. Nessuna pagina del sito lo usava (controllato nel browser su tutte le
+pagine); la skill di grafica 3.3.0 chiede di ospitare solo i caratteri davvero usati.
